@@ -16,17 +16,17 @@ function renderProducts() {
   const container = document.getElementById('products');
   data.products.forEach(product => {
     const btn = document.createElement('button');
-    
+
     const img = document.createElement('img');
     img.src = `assets/products/${product.name}.png`;
     img.alt = product.name;
     img.style.width = '150px';
     img.style.display = 'block';
     img.style.margin = '0 auto 10px auto';
-    
+
     const span = document.createElement('span');
     span.textContent = `${product.name} (€${product.price})`;
-    
+
     btn.appendChild(img);
     btn.appendChild(span);
 
@@ -44,7 +44,25 @@ function renderSymbols() {
   container.innerHTML = '';
   data.symbols.forEach(symbol => {
     const btn = document.createElement('button');
-    btn.textContent = symbol.name;
+
+    // Create image element for the symbol
+    const img = document.createElement('img');
+    let fileName = symbol.name;
+    // Handle specific file names with an exclamation mark
+    if (fileName === 'BOOM' || fileName === 'OMG') fileName += '!';
+    img.src = `assets/symbool/symbol-${fileName}.png`;
+    img.alt = symbol.name;
+    img.style.width = '100px';
+    img.style.display = 'block';
+    img.style.margin = '0 auto 10px auto';
+
+    // Create span for the label
+    const span = document.createElement('span');
+    span.textContent = symbol.name;
+
+    btn.appendChild(img);
+    btn.appendChild(span);
+
     btn.onclick = () => {
       selected.symbol = symbol.id;
       document.getElementById('step-colours').classList.remove('hidden');
@@ -57,9 +75,28 @@ function renderSymbols() {
 function renderColours() {
   const container = document.getElementById('colours');
   container.innerHTML = '';
+
+  // Find the selected product to show its coloured version
+  const selectedProduct = data.products.find(p => p.id === selected.product);
+
   data.colours.forEach(colour => {
     const btn = document.createElement('button');
-    btn.textContent = `${colour.name} (+€${colour.price_add})`;
+
+    // Create image element showing the selected product in this colour
+    const img = document.createElement('img');
+    img.src = `assets/colours/${selectedProduct.name}-${colour.name}.png`;
+    img.alt = colour.name;
+    img.style.width = '150px';
+    img.style.display = 'block';
+    img.style.margin = '0 auto 10px auto';
+
+    // Create span for the label
+    const span = document.createElement('span');
+    span.textContent = `${colour.name} (+€${colour.price_add})`;
+
+    btn.appendChild(img);
+    btn.appendChild(span);
+
     btn.onclick = () => {
       selected.colour = colour.id;
       showSummary();
@@ -90,14 +127,14 @@ document.getElementById('order-btn').onclick = () => {
       school: 'WDV'
     })
   })
-  .then(res => res.json())
-  .then(result => {
-    if (result.success) {
-      document.getElementById('app').querySelectorAll('section')
-        .forEach(s => s.classList.add('hidden'));
-      document.getElementById('thankyou').classList.remove('hidden');
-    }
-  });
+    .then(res => res.json())
+    .then(result => {
+      if (result.success) {
+        document.getElementById('app').querySelectorAll('section')
+          .forEach(s => s.classList.add('hidden'));
+        document.getElementById('thankyou').classList.remove('hidden');
+      }
+    });
 };
 
 document.getElementById('reset-btn').onclick = () => {
